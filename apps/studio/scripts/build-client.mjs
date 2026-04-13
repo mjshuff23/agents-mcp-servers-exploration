@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const appRoot = join(__dirname, '..');
 
+// The studio UI stays framework-free, so this tiny build just bundles one browser entrypoint.
 await esbuild.build({
   entryPoints: [join(appRoot, 'src/client/index.ts')],
   bundle: true,

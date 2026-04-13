@@ -22,6 +22,7 @@ const state: ClientState = {
   theme: getPreferredTheme()
 };
 
+// The browser only owns rendering and user input; the studio server owns protocol state.
 void bootstrap();
 
 async function bootstrap(): Promise<void> {
@@ -506,6 +507,7 @@ function escapeHtml(value: string): string {
 }
 
 function getPreferredTheme(): Theme {
+  // Respect a saved override first, then fall back to the operating system preference.
   const storedTheme = readStoredTheme();
   if (storedTheme) {
     return storedTheme;
@@ -528,6 +530,7 @@ function applyTheme(theme: Theme): void {
 }
 
 function handleSystemThemeChange(event: MediaQueryListEvent): void {
+  // Once someone toggles manually, we stop auto-following later system changes.
   if (readStoredTheme()) {
     return;
   }

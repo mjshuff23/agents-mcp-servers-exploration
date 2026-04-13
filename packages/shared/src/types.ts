@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// These schemas are the shared contract between the browser, the studio server, and the MCP runtime.
 export const agentModeSchema = z.enum(['deterministic', 'live']);
 export type AgentMode = z.infer<typeof agentModeSchema>;
 

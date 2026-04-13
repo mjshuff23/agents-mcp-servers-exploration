@@ -85,6 +85,7 @@ export class WorkspaceMcpRuntime {
   async initialize(): Promise<void> {
     await fs.mkdir(this.dataDir, { recursive: true });
     await this.loadRecipes();
+    // Register primitives before connect() so discovery is the first thing the studio sees.
     this.registerResources();
     this.registerPrompts();
     this.registerTools();
@@ -186,6 +187,7 @@ export class WorkspaceMcpRuntime {
   }
 
   private registerPrompts(): void {
+    // Static prompts explain the protocol before dynamic recipe prompts start appearing.
     this.server.registerPrompt(
       'bootstrap-agent',
       {
@@ -610,6 +612,7 @@ export class WorkspaceMcpRuntime {
   }
 
   private async getPrimaryRoot(ctx?: unknown): Promise<string> {
+    // roots/list is a client-owned capability, so the server asks the studio what is in bounds.
     const roots = await this.server.server.listRoots();
     const root = roots.roots[0]?.uri;
     if (!root) {
@@ -781,6 +784,7 @@ export class WorkspaceMcpRuntime {
 
   private async setLatestRun(next: LatestRunState): Promise<void> {
     this.latestRun = next;
+    // A subscribed resource makes tool activity visible in the studio without custom polling logic.
     await this.server.server.sendResourceUpdated({ uri: SESSION_RESOURCE_URI });
   }
 }

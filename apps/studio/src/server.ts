@@ -36,6 +36,7 @@ type PendingElicitationResolver = {
   resolve: (value: { action: 'accept' | 'decline'; content?: ElicitationContent }) => void;
 };
 
+// v1 only uses stdio, but the studio state model should survive a later HTTP transport.
 type TransportAdapter = {
   kind: 'stdio' | 'streamable-http';
   connect(client: Client): Promise<void>;
@@ -196,6 +197,7 @@ class StudioRuntime {
   }
 
   private installClientHandlers(): void {
+    // Server-initiated MCP requests land here because the studio is the active client.
     this.client.setRequestHandler('roots/list', async () => {
       const root = pathToFileURL(this.rootDir).href;
       this.trace('lifecycle', 'server->client', 'roots/list', 'Server requested the allowed workspace roots.', {
@@ -276,6 +278,7 @@ class StudioRuntime {
     this.client.setNotificationHandler('notifications/resources/updated', notification => {
       this.trace('notification', 'server->client', 'resources/updated', 'A subscribed resource changed.', notification.params);
       if (notification.params.uri === SESSION_RESOURCE_URI) {
+        // The "latest run" card updates from this push path instead of polling the server.
         void this.readLatestRunResource();
       }
     });
@@ -451,6 +454,7 @@ class StudioRuntime {
   }
 
   private broadcastSnapshot(): void {
+    // The browser always renders from one normalized snapshot so the UI is easy to inspect.
     const payload = this.serializeSseEvent('snapshot', this.snapshot);
     for (const client of this.clients) {
       client.write(payload);

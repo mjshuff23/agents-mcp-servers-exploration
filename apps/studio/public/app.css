@@ -31,6 +31,7 @@
   color-scheme: dark;
 }
 
+/* Keep layout math predictable even when badges, code, and trace payloads get long. */
 * {
   box-sizing: border-box;
 }
@@ -41,6 +42,7 @@ body {
   color: var(--text);
   background: var(--bg-accent);
   min-height: 100vh;
+  overflow-x: hidden;
   transition: background 180ms ease, color 180ms ease;
 }
 
@@ -61,6 +63,7 @@ button {
   padding: 28px;
   position: relative;
   isolation: isolate;
+  overflow-x: clip;
 }
 
 .hero {
@@ -69,6 +72,7 @@ button {
   gap: 24px;
   align-items: flex-start;
   margin-bottom: 24px;
+  min-width: 0;
 }
 
 .hero-card,
@@ -85,6 +89,7 @@ button {
 
 .hero-card {
   flex: 1;
+  min-width: 0;
   padding: 24px 28px;
 }
 
@@ -103,6 +108,7 @@ button {
 
 .hero-side {
   min-width: 280px;
+  width: min(320px, 100%);
   padding: 22px;
   background: var(--panel-strong);
   border-radius: var(--radius);
@@ -134,6 +140,7 @@ button {
 .meta-grid {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 
 .meta-row {
@@ -141,44 +148,60 @@ button {
   justify-content: space-between;
   gap: 12px;
   color: var(--muted);
+  min-width: 0;
 }
 
 .meta-row strong {
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.85fr);
   gap: 20px;
+  min-width: 0;
 }
 
 .column {
   display: grid;
   gap: 20px;
+  min-width: 0;
 }
 
 .panel {
   padding: 20px;
+  min-width: 0;
 }
 
 .section-title {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: baseline;
+  align-items: flex-start;
+  flex-wrap: wrap;
   margin-bottom: 12px;
+  min-width: 0;
+}
+
+.section-title h2,
+.section-title span {
+  min-width: 0;
 }
 
 .section-title span {
   color: var(--muted);
   font-size: 0.95rem;
+  flex: 1 1 280px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .badge-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .badge {
@@ -191,6 +214,8 @@ button {
   background: rgba(255, 255, 255, 0.52);
   font-size: 0.88rem;
   color: var(--text);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .badge.enabled::before {
@@ -214,17 +239,20 @@ button {
 .elicitation-form {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .control-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  min-width: 0;
 }
 
 .field {
   display: grid;
   gap: 6px;
+  min-width: 0;
 }
 
 .field label {
@@ -252,6 +280,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  min-width: 0;
 }
 
 .primary,
@@ -298,6 +327,7 @@ button {
   max-height: 420px;
   overflow: auto;
   padding-right: 4px;
+  min-width: 0;
 }
 
 .message,
@@ -308,6 +338,7 @@ button {
   border-radius: 18px;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.62);
+  min-width: 0;
 }
 
 .message.system {
@@ -332,24 +363,42 @@ button {
 .catalog-section {
   display: grid;
   gap: 12px;
+  min-width: 0;
 }
 
 .catalog-grid {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 
 .catalog-card code,
 .trace-item code {
   font-family: var(--font-mono);
   font-size: 0.85rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.catalog-card header,
+.trace-item header {
+  min-width: 0;
+}
+
+.catalog-card p,
+.message p,
+.trace-item p,
+.pill-note,
+.resource-preview {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .trace-item header {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: baseline;
+  align-items: flex-start;
   margin-bottom: 8px;
 }
 
@@ -376,6 +425,7 @@ button {
 .split {
   display: grid;
   gap: 16px;
+  min-width: 0;
 }
 
 .resource-preview {
@@ -405,13 +455,21 @@ button {
   }
 }
 
-@media (max-width: 1100px) {
+/*
+  Collapse early enough that "desktop with devtools open" still feels deliberate instead
+  of forcing both columns to compete for the same width budget.
+*/
+@media (max-width: 1380px) {
   .layout {
     grid-template-columns: 1fr;
   }
 
   .hero {
     flex-direction: column;
+  }
+
+  .hero-side {
+    width: 100%;
   }
 }
 

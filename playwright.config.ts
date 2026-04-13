@@ -9,6 +9,7 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
   webServer: {
+    // Reset the local data dir so prompt-catalog and recipe assertions stay deterministic.
     command: "rm -rf .studio-data/e2e && AGENTS_DATA_DIR=.studio-data/e2e AGENTS_STUDIO_PORT=4322 npm run dev",
     url: 'http://127.0.0.1:4322',
     timeout: 120_000,

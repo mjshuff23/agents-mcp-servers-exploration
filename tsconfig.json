@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    // Project references let `tsc -b` compile this workspace in dependency order.
     { "path": "./packages/shared" },
     { "path": "./packages/workspace-mcp" },
     { "path": "./apps/studio" }

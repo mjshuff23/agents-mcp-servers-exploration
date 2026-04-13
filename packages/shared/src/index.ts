@@ -9,6 +9,7 @@ export function slugify(value: string): string {
     .slice(0, 48);
 }
 
+// Dynamic recipe prompts are published with a stable prefix so the catalog is easy to scan.
 export function recipePromptName(recipeIdOrName: string): string {
   return `recipe.${slugify(recipeIdOrName)}`;
 }

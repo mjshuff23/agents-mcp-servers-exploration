@@ -1,102 +1,90 @@
 # Agent + MCP Learning Playground
 
-A local TypeScript workspace for exploring self-serve agents and the full MCP surface area through a browser studio and a local stdio MCP server.
+Previous: [Repository Root](./README.md) | Next: [Docs](./docs/README.md) | Parent: [Repository Root](./README.md)
 
-## What This Repo Is
+A local TypeScript workspace for learning self-serve agents from both sides of the glass: the browser studio shows the protocol as it happens, and the codebase now doubles as a guided reading path.
 
-This playground is built to make the Model Context Protocol legible from the wire up. Instead of hiding the protocol behind one chat box, it exposes the moving parts:
+## Why This Repo Exists
+
+Most MCP demos make the protocol disappear behind a chat box. This repository does the opposite:
+
+- the studio owns the MCP client session
+- the local MCP server exposes tools, resources, prompts, logging, completions, roots, sampling, elicitation, and `listChanged`
+- the UI renders a live trace so you can see lifecycle and capability negotiation instead of guessing
+- the repo itself is documented like a walkthrough, not just a source dump
+
+The default experience is deterministic, which means the full tour works without an API key. Live sampling is optional.
+
+## Learning Path
+
+Read the repo in this order:
+
+1. [Docs](./docs/README.md)
+2. [Diagrams](./docs/diagrams/README.md)
+3. [Apps](./apps/README.md)
+4. [Studio](./apps/studio/README.md)
+5. [Studio Source](./apps/studio/src/README.md)
+6. [Studio Client](./apps/studio/src/client/README.md)
+7. [Studio Public Assets](./apps/studio/public/README.md)
+8. [Studio Scripts](./apps/studio/scripts/README.md)
+9. [Packages](./packages/README.md)
+10. [Shared Package](./packages/shared/README.md)
+11. [Shared Source](./packages/shared/src/README.md)
+12. [Workspace MCP Package](./packages/workspace-mcp/README.md)
+13. [Workspace MCP Source](./packages/workspace-mcp/src/README.md)
+14. [Test Helpers](./test/README.md)
+15. [Test Suites](./tests/README.md)
+16. [Unit Tests](./tests/unit/README.md)
+17. [Integration Tests](./tests/integration/README.md)
+18. [End-to-End Tests](./tests/e2e/README.md)
+
+## What You Can Learn Here
+
+### Protocol surfaces
 
 - lifecycle and capability negotiation
 - `tools`, `resources`, and `prompts`
-- `logging` and prompt `completions`
+- prompt `completions`
+- `logging`
 - client-provided `roots`
-- server-driven `sampling` and `elicitation`
-- live `listChanged` notifications
-- subscribed resource updates
+- server-driven `sampling`
+- server-driven `elicitation`
+- live `prompts/list_changed`, `tools/list_changed`, and resource updates
 
-The default mode is deterministic, so the full flow works without any API key. If you want live sampling, you can opt into it with `OPENAI_API_KEY`.
+### Product surfaces
 
-## Architecture
+- a browser studio that visualizes MCP behavior
+- a local stdio MCP server with safe workspace-scoped primitives
+- a self-serve agent recipe flow that republishes recipes back into the prompt catalog
 
-The workspace is split into two packages and one app:
+## Architecture At A Glance
 
 - `apps/studio`
-  The local web studio. It serves the UI, owns the MCP client connection, spawns the server over `stdio`, handles server-initiated requests like sampling and elicitation, and streams a normalized trace into the browser.
+  The local web app. It serves the browser shell, owns the MCP client connection, handles server-initiated requests like `sampling/createMessage` and `elicitation/create`, and streams a normalized snapshot to the browser over SSE.
 - `packages/workspace-mcp`
-  The MCP server. It advertises the learning-focused capability set and exposes local tools, resources, and prompts rooted in the client-provided workspace directory.
+  The MCP server. It exposes learning-focused tools, resources, and prompts that are scoped to the client-provided workspace root.
 - `packages/shared`
-  Shared schemas, types, and helpers used on both sides of the browser/server boundary.
+  Shared schemas and helpers used by both sides so the studio, browser, and MCP runtime all agree on the same shapes.
+- `docs/diagrams`
+  The canonical repo-native flow diagrams, written in Mermaid so they stay versioned with the code.
 
-The browser UI is organized around four panes:
+## Repo-Native Diagram Set
 
-- Run / Chat
-- Capability Matrix
-- Primitive Catalog
-- Live Trace Timeline
+The canonical diagrams live in [docs/diagrams/README.md](./docs/diagrams/README.md):
 
-## Implemented Capabilities
+- [Architecture Overview](./docs/diagrams/architecture-overview.md)
+- [Protocol Tour Sequence](./docs/diagrams/protocol-tour-sequence.md)
+- [Recipe Publication Flow](./docs/diagrams/recipe-publication-flow.md)
 
-### Server capabilities
+Figma write access can be limited by the connected account seat. When that happens, these markdown diagrams remain the source of truth and the external diagram links are treated as optional mirrors rather than blockers.
 
-- `tools` with `listChanged`
-- `resources` with `listChanged` and `subscribe`
-- `prompts` with `listChanged`
-- `logging`
-- `completions`
+## External References
 
-### Client capabilities
-
-- `roots` with `listChanged`
-- `sampling`
-- `elicitation` in `form` mode
-
-### Tools
-
-- `workspace.search`
-  Searches the allowed workspace root for plain-text matches.
-- `file.summarize`
-  Reads a file and asks the client to summarize it through MCP sampling.
-- `agent.scaffold`
-  Creates or updates a self-serve agent recipe, persists it locally, and republishes it as a prompt template.
-
-### Resources
-
-- `workspace://tree`
-  A compact tree of the current allowed workspace.
-- `workspace://file/{path}`
-  Reads a file from the allowed workspace root.
-- `session://latest-run`
-  A subscribed live resource that updates after tool activity.
-
-### Prompts
-
-- `bootstrap-agent`
-  A starter prompt for a self-serve workspace agent.
-- `explain-trace`
-  A prompt for turning the latest trace into a teaching artifact.
-- `recipe.*`
-  Dynamic prompts generated from saved agent recipes.
-
-## Agent Recipes
-
-The studio includes a small self-serve recipe system. Each recipe stores:
-
-- `id`
-- `name`
-- `description`
-- `systemPrompt`
-- `allowedTools`
-- `pinnedResources`
-- `starterPrompt`
-- `mode`
-
-Recipes are persisted locally in `.studio-data/recipes.json` and ignored by git. When a recipe is created or updated, the server publishes a matching `recipe.*` prompt and emits a real `prompts/list_changed` notification so the UI can show the change.
-
-## Deterministic vs Live Mode
-
-`deterministic` is the default and requires no credentials. Sampling requests return a predictable teaching response so you can explore the protocol shape safely.
-
-`live` uses the browser studio’s client-side sampling handler to call the OpenAI Responses API if `OPENAI_API_KEY` is present. If the key is missing or the live request fails, the studio falls back to the deterministic explanation and says so in the transcript.
+- Notion page: [Agent + MCP Learning Playground](https://www.notion.so/341c2ea5f18f8161a5bac1d466e26600)
+- FigJam mirrors:
+  - [Architecture Overview](https://www.figma.com/online-whiteboard/create-diagram/ad27f2ea-8360-4fcb-81e5-a0e7c1743c53?utm_source=other&utm_content=edit_in_figjam&oai_id=&request_id=6c9d3598-897d-4c15-b5f9-535df2917989)
+  - [Protocol Tour Sequence](https://www.figma.com/online-whiteboard/create-diagram/27df7f85-7c5d-4f37-afb4-432a5948f69b?utm_source=other&utm_content=edit_in_figjam&oai_id=&request_id=3f326942-79c1-4af3-bdcb-a4758f0b06cd)
+  - [Recipe Publication Flow](https://www.figma.com/online-whiteboard/create-diagram/682da6fe-ca6f-45bd-9746-2d26dbf66b82?utm_source=other&utm_content=edit_in_figjam&oai_id=&request_id=2947e8ab-5352-466c-b672-fceeae3bb58e)
 
 ## Getting Started
 
@@ -123,78 +111,35 @@ npm run build
 npm start
 ```
 
-Then open `http://127.0.0.1:4321`.
+Open `http://127.0.0.1:4321` and run the protocol tour.
 
-### Environment
+## Suggested Walkthrough
 
-Copy `.env.example` to `.env` if you want to change defaults:
+1. Start the studio and confirm the terminal prints the connection banner.
+2. Open the browser and inspect the capability matrix before you click anything.
+3. Run `Run protocol tour`.
+4. When the server asks for missing recipe input, answer the elicitation form.
+5. Watch the trace show prompt fetches, resource reads, tool calls, notifications, and client-side sampling.
+6. Compare the live UI to the corresponding code in [`apps/studio/src/server.ts`](./apps/studio/src/server.ts) and [`packages/workspace-mcp/src/runtime.ts`](./packages/workspace-mcp/src/runtime.ts).
+7. Read the tests to see how the same flow is asserted without the UI.
 
-```bash
-AGENTS_STUDIO_PORT=4321
-AGENTS_DATA_DIR=.studio-data
-AGENTS_DEFAULT_MODE=deterministic
-OPENAI_API_KEY=
-```
+## Key Files
 
-## Learning Flow
+- [`package.json`](./package.json)
+  Defines the workspace scripts and the top-level build/test workflow.
+- [`tsconfig.base.json`](./tsconfig.base.json)
+  Sets the shared TypeScript baseline for every project in the repo.
+- [`playwright.config.ts`](./playwright.config.ts)
+  Boots the studio for browser verification and regression coverage.
+- [`vitest.config.ts`](./vitest.config.ts)
+  Splits fast contract tests from stdio integration tests.
 
-The easiest way to explore the repo is:
+## What To Read Next
 
-1. Start the studio.
-2. Click `Run protocol tour`.
-3. Watch the trace fill in with initialize, discovery, prompt fetches, resource reads, tool calls, sampling, and elicitation.
-4. Answer the elicitation form.
-5. Verify that the new `recipe.*` prompt appears in the prompt catalog and that the recipe shows up in the persisted recipe list.
+Move into [docs/README.md](./docs/README.md). That folder explains how the written materials in this repo are organized before you dive into runtime code.
 
-## Tests
+## Try This
 
-The repo includes three layers of verification:
-
-- unit tests for shared schemas and recipe-to-prompt conversion
-- stdio integration tests for handshake, discovery, roots, resource reads, prompt fetches, sampling, elicitation, and `prompts/list_changed`
-- a browser smoke test that runs the protocol tour, answers elicitation, and verifies the prompt catalog update
-
-Run them with:
-
-```bash
-npm test
-```
-
-You can also run each layer separately:
-
-```bash
-npm run test:unit
-npm run test:integration
-npm run test:e2e
-```
-
-## Project Layout
-
-```text
-.
-├── apps/
-│   └── studio/
-├── packages/
-│   ├── shared/
-│   └── workspace-mcp/
-├── tests/
-│   ├── e2e/
-│   ├── integration/
-│   └── unit/
-├── .env.example
-├── package.json
-├── playwright.config.ts
-└── vitest.config.ts
-```
-
-## Phase 2
-
-Intentionally deferred:
-
-- streamable HTTP transport
-- auth
-- multi-user state
-- experimental `tasks` support
-- production deployment concerns
-
-The transport boundary in the studio is already isolated behind a `TransportAdapter` so a future HTTP transport can slot in without rewriting the UI or the runtime model.
+- Open [docs/diagrams/protocol-tour-sequence.md](./docs/diagrams/protocol-tour-sequence.md) and compare the sequence diagram to the live trace after a tour run.
+- Open [apps/studio/src/server.ts](./apps/studio/src/server.ts) and find where the studio answers `roots/list`.
+- Open [packages/workspace-mcp/src/runtime.ts](./packages/workspace-mcp/src/runtime.ts) and find where a saved recipe becomes a new prompt.

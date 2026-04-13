@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    // Shared compiler baseline for the app and both packages.
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
