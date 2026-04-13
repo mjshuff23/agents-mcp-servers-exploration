@@ -1,0 +1,17 @@
+{
+  "name": "@agents/studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:client": "node ./scripts/build-client.mjs"
+  },
+  "dependencies": {
+    "@agents/shared": "0.1.0",
+    "@modelcontextprotocol/client": "^2.0.0-alpha.2",
+    "@modelcontextprotocol/server": "^2.0.0-alpha.2"
+  }
+}

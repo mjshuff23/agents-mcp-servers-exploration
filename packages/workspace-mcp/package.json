@@ -1,0 +1,16 @@
+{
+  "name": "@agents/workspace-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@agents/shared": "0.1.0",
+    "@modelcontextprotocol/server": "^2.0.0-alpha.2",
+    "zod": "^4.1.12"
+  }
+}

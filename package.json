@@ -1,0 +1,30 @@
+{
+  "name": "agents-learning-playground",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b && npm run build:client -w apps/studio",
+    "clean": "rm -rf node_modules coverage playwright-report test-results apps/*/dist packages/*/dist apps/studio/public/assets",
+    "dev": "npm run build && node apps/studio/dist/server.js",
+    "start": "node apps/studio/dist/server.js",
+    "test": "npm run build && vitest run --project unit --project integration && playwright test",
+    "test:unit": "npm run build && vitest run --project unit",
+    "test:integration": "npm run build && vitest run --project integration",
+    "test:e2e": "npm run build && playwright test",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "devDependencies": {
+    "@cfworker/json-schema": "^4.1.1",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^24.7.2",
+    "esbuild": "^0.25.11",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.7"
+  }
+}
