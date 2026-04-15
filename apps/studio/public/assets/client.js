@@ -350,14 +350,32 @@
     const tourForm = document.querySelector("#tour-form");
     tourForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const form = new FormData(tourForm);
-      await fetchJson("/api/run-tour", {
-        method: "POST",
-        body: JSON.stringify({
-          goal: form.get("goal"),
-          mode: form.get("mode")
-        })
-      });
+      const submitButton = tourForm.querySelector("button[type=\"submit\"]");
+      const originalText = submitButton?.textContent ?? "";
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Starting tour…";
+      }
+
+      try {
+        const form = new FormData(tourForm);
+        await fetchJson("/api/run-tour", {
+          method: "POST",
+          body: JSON.stringify({
+            goal: form.get("goal"),
+            mode: form.get("mode")
+          })
+        });
+        console.info("Protocol tour request sent. Waiting for server events...");
+      } catch (error) {
+        console.error("Failed to start protocol tour", error);
+        alert(`Failed to start protocol tour: ${error instanceof Error ? error.message : String(error)}`);
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText || "Run protocol tour";
+        }
+      }
     });
     const refreshButton = document.querySelector("#refresh-button");
     refreshButton?.addEventListener("click", async () => {

@@ -482,3 +482,29 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Improve contrast and visibility for inputs/selects in dark theme.
+   Some browsers render option popups differently — these rules help keep
+   the select and its options readable in both themes. */
+:root[data-theme="dark"] .field input,
+:root[data-theme="dark"] .field textarea,
+:root[data-theme="dark"] .field select {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.field select {
+  position: relative;
+  z-index: 2;
+}
+
+select option {
+  background: var(--panel-strong);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] select option {
+  background: #0c1116;
+  color: var(--text);
+}
